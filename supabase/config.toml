@@ -1,0 +1,9 @@
+# Supabase CLI 配置。
+# 用法见 README「数据库工作流」一节：
+#   supabase link --project-ref <你的 project ref>
+#   supabase db push
+project_id = "catnap"
+
+[db]
+# 远端 Supabase 目前是 Postgres 15
+major_version = 15
