@@ -1,5 +1,6 @@
 import { serviceClient } from "./supabase";
 import { formatCents } from "./money";
+import { SITE_URL } from "./site";
 
 /**
  * 邮件走 Resend。
@@ -7,7 +8,6 @@ import { formatCents } from "./money";
  * 上线前必须在 Supabase 后台把 SMTP 换成 Resend，否则开单当天顾客登录不了。
  */
 const RESEND_KEY = process.env.RESEND_API_KEY;
-const SITE = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
 const FROM = process.env.EMAIL_FROM ?? "Cat Nap <orders@catnapbaking.ca>";
 
 async function send(to: string, subject: string, html: string) {
@@ -55,7 +55,7 @@ export async function sendReceipt(orderId: string) {
     <table role="presentation" style="border-collapse:collapse;margin-bottom:18px">
       <tr>
         <td style="padding-right:10px">
-          <img src="${SITE}/brand/cat-nap-mark-128.png" width="42" height="42" alt=""
+          <img src="${SITE_URL}/brand/cat-nap-mark-128.png" width="42" height="42" alt=""
                style="display:block;border-radius:50%;background:#e9bb67" />
         </td>
         <td style="font-family:Georgia,serif;font-size:15px;color:#33241e;letter-spacing:.06em">

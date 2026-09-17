@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { isTeaser } from "@/lib/site-mode";
+import { normalizeSiteUrl } from "@/lib/site";
 import { z } from "zod";
 import { stripe, stripeConfigured, paymentMethodTypes } from "@/lib/stripe";
 import { getCurrentBatch, getProducts, effectivePrice } from "@/lib/data";
@@ -78,7 +79,7 @@ export async function POST(req: Request) {
 
   // ---- Stripe 已接入 ----
   const s = stripe()!;
-  const origin = process.env.NEXT_PUBLIC_SITE_URL ?? new URL(req.url).origin;
+  const origin = normalizeSiteUrl(process.env.NEXT_PUBLIC_SITE_URL) ?? new URL(req.url).origin;
 
   const session = await s.checkout.sessions.create({
     mode: "payment",

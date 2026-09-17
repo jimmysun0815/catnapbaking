@@ -1,7 +1,7 @@
 /**
  * 曲奇插画，纯 CSS/DOM 画出来。
- * 原设计用的是 Manus 托管的照片，本地没有资源；等实拍图到位后
- * 把 .hero-image-frame 里的这块换成 <Image> 即可，外框和贴纸都不用动。
+ * 中文首页 hero 已换成实拍图 /brand/04.jpg，CookieStack 留着备用；
+ * 英文页的 GiantCookie 仍在用，暂时没有对应的实拍图。
  */
 export function CookieStack() {
   return (

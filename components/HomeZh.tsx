@@ -1,10 +1,10 @@
 import Link from "next/link";
+import Image from "next/image";
 import { ArrowUpRight, ChevronRight, Clock3, MapPin, Sparkles, Star } from "lucide-react";
 import { zh } from "@/lib/content";
 import { formatCents } from "@/lib/money";
 import { effectivePrice } from "@/lib/data";
 import { Header, Footer, type NavUser } from "@/components/SiteChrome";
-import { CookieStack } from "@/components/CookieArt";
 import { CatMarkLarge } from "@/components/BrandMark";
 import { Waitlist } from "@/components/Waitlist";
 import { isTeaser } from "@/lib/site-mode";
@@ -77,7 +77,14 @@ export function HomeZh({
           </div>
 
           <div className="hero-image-frame">
-            <CookieStack />
+            <Image
+              src="/brand/04.jpg"
+              alt="掰开的巧克力豆曲奇，外缘脆、中心软"
+              fill
+              fetchPriority="high"
+              sizes="(max-width: 680px) 100vw, (max-width: 1100px) 50vw, 610px"
+              style={{ objectFit: "cover", objectPosition: "center" }}
+            />
             <div className="image-sticker">
               {isTeaser
                 ? <><span>即将</span><strong>✦</strong><span>开张</span></>

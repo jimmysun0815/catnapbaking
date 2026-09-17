@@ -1,11 +1,10 @@
 import type { Metadata } from "next";
 import "./globals.css";
-
-const SITE = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
+import { SITE_URL } from "@/lib/site";
 
 export const metadata: Metadata = {
   // OG 图用相对路径写，靠这个拼成绝对地址；微信只认绝对地址
-  metadataBase: new URL(SITE),
+  metadataBase: new URL(SITE_URL),
   title: "不太甜研究所 · Cat Nap Baking",
   description: "手工曲奇，Richmond BC 每周现烤。Handmade cookies baked weekly in Richmond, BC.",
 };
