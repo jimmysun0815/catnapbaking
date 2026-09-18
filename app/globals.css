@@ -543,6 +543,22 @@ img { max-width: 100%; }
 .mode-actions { align-items: center; display: flex; flex-wrap: wrap; gap: 14px; margin-top: 24px; }
 .mode-warn { color: #a8433a; font-size: 12.5px; line-height: 1.7; max-width: 420px; }
 
+/* --- 优惠码 --- */
+.coupon-box { border-bottom: 1px solid rgba(51,36,30,.14); margin-bottom: 18px; padding-bottom: 18px; }
+.coupon-box label { color: #8a6853; display: block; font-size: 10px; letter-spacing: .14em; margin-bottom: 8px; text-transform: uppercase; }
+.coupon-row { display: flex; gap: 8px; }
+.coupon-row .field { flex: 1; letter-spacing: .08em; min-width: 0; text-transform: uppercase; }
+.coupon-apply { background: #35251f; border: 0; color: #f4eadb; cursor: pointer; flex: none; font: inherit; font-size: 12px; letter-spacing: .06em; padding: 0 16px; }
+.coupon-apply:disabled { cursor: default; opacity: .45; }
+.coupon-ok { color: #35502f; font-size: 11.5px; margin: 9px 0 0; }
+.coupon-bad { color: #a8433a; font-size: 11.5px; margin: 9px 0 0; }
+.summary-line { color: #6c5042; display: flex; font-size: 12.5px; justify-content: space-between; padding: 3px 0; }
+.summary-line-off { color: #b65f3e; }
+.coupon-toolbar { align-items: center; display: flex; flex-wrap: wrap; gap: 16px; margin-top: 28px; }
+.coupon-form { background: #ece1ce; display: grid; gap: 16px 20px; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); margin-top: 18px; padding: 22px 20px; }
+.coupon-form label { display: flex; flex-direction: column; gap: 6px; }
+.coupon-form label > span { color: #8a6853; font-size: 10px; letter-spacing: .12em; text-transform: uppercase; }
+
 /* ---------------------------------------------------------- 响应式 */
 
 @media (max-width: 1000px) {

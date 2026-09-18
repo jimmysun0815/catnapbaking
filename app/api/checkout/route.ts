@@ -4,10 +4,11 @@ import { normalizeSiteUrl } from "@/lib/site";
 import { z } from "zod";
 import { stripe, stripeConfigured, paymentMethodTypes } from "@/lib/stripe";
 import { getCurrentBatch, getProducts, effectivePrice } from "@/lib/data";
-import { createPendingOrder, validateOrder, HOLD_MINUTES } from "@/lib/orders";
+import { createPendingOrder, validateOrder, releaseOrderHold, HOLD_MINUTES } from "@/lib/orders";
 import { serviceClient } from "@/lib/supabase";
 import { getSessionUser } from "@/lib/supabase/server";
 import { isConfigured } from "@/lib/supabase";
+import { redeemCoupon, COUPON_MESSAGE } from "@/lib/coupons";
 
 const Body = z.object({
   locale: z.enum(["zh", "en"]),
@@ -24,6 +25,7 @@ const Body = z.object({
     quantity: z.number().int().positive().max(50),
     flavourId: z.string().nullable().optional(),
   })).min(1),
+  couponCode: z.string().trim().min(1).max(40).optional().nullable(),
 });
 
 export async function POST(req: Request) {
@@ -37,7 +39,7 @@ export async function POST(req: Request) {
       { status: 400 }
     );
   }
-  const { locale, batchId, slotId, items, contact } = parsed.data;
+  const { locale, batchId, slotId, items, contact, couponCode } = parsed.data;
 
   // 下单必须登录：收据、取货提醒和订单历史都要绑到账户上。
   // 还没接 Supabase 时（演示模式）跳过这一步，否则本地没法走流程。
@@ -72,14 +74,42 @@ export async function POST(req: Request) {
     batch: batch!, slotId, lines: valid, contact, profileId: user?.id ?? null,
   });
 
+  // 折扣一律服务端算。前端传来的金额只用于显示，不参与计价
+  let discount = 0;
+  if (couponCode && orderId) {
+    const r = await redeemCoupon(couponCode, orderId, subtotal);
+    if (!r.ok) {
+      // 券不可用就整单退回，让顾客自己决定去掉券还是换一张，
+      // 比默默按原价收钱强
+      await releaseOrderHold(orderNo, "cancelled");
+      return NextResponse.json(
+        { error: "coupon_rejected", couponReason: r.reason, message: COUPON_MESSAGE[r.reason] },
+        { status: 409 }
+      );
+    }
+    discount = r.discountCents;
+  }
+  const payable = Math.max(subtotal - discount, 0);
+
   // ---- Stripe 未接入：进模拟支付页，走同一套状态流转 ----
   if (!stripeConfigured) {
-    return NextResponse.json({ url: `/${locale}/pay/${orderNo}` });
+    return NextResponse.json({
+      url: `/${locale}/pay/${orderNo}`, subtotal, discount, total: payable,
+    });
   }
 
   // ---- Stripe 已接入 ----
   const s = stripe()!;
   const origin = normalizeSiteUrl(process.env.NEXT_PUBLIC_SITE_URL) ?? new URL(req.url).origin;
+
+  // 折扣用一次性 Stripe 券传过去。不改 line_items 单价：
+  // 按比例摊到每行会产生分位舍入，和库里记的 total 对不上
+  const stripeDiscounts = discount > 0
+    ? [{ coupon: (await s.coupons.create({
+          amount_off: discount, currency: "cad", duration: "once",
+          name: locale === "zh" ? "优惠码" : "Discount",
+        })).id }]
+    : undefined;
 
   const session = await s.checkout.sessions.create({
     mode: "payment",
@@ -102,7 +132,11 @@ export async function POST(req: Request) {
         },
       },
     })),
-    metadata: { order_no: orderNo, batch_id: batch!.id, slot_id: slotId, locale },
+    discounts: stripeDiscounts,
+    metadata: {
+      order_no: orderNo, batch_id: batch!.id, slot_id: slotId, locale,
+      coupon_code: couponCode ?? "", discount_cents: String(discount),
+    },
     success_url: `${origin}/${locale}/success?order=${orderNo}`,
     cancel_url: `${origin}/${locale}/order`,
   });
@@ -112,5 +146,7 @@ export async function POST(req: Request) {
     await db.from("orders").update({ payment_ref: session.id }).eq("id", orderId);
   }
 
-  return NextResponse.json({ url: session.url, holdMinutes: HOLD_MINUTES, subtotal });
+  return NextResponse.json({
+    url: session.url, holdMinutes: HOLD_MINUTES, subtotal, discount, total: payable,
+  });
 }

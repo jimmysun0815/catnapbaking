@@ -32,6 +32,11 @@ export function OrderForm({ locale, batch, product, flavours, prices, t, signedI
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [notice, setNotice] = useState<string | null>(null);
+  const [coupon, setCoupon] = useState("");
+  const [couponState, setCouponState] = useState<
+    { ok: boolean; message: string; discount: number } | null
+  >(null);
+  const [couponBusy, setCouponBusy] = useState(false);
 
   const remaining = Math.max(0, batch.capacity_boxes - batch.boxes_taken);
   const boxes = Object.values(qty).reduce((a, b) => a + b, 0);
@@ -54,6 +59,30 @@ export function OrderForm({ locale, batch, product, flavours, prices, t, signedI
 
   function bump(id: string, delta: number) {
     setQty((q) => ({ ...q, [id]: Math.max(0, (q[id] ?? 0) + delta) }));
+    // 数量一变，门槛和折扣都可能不同，之前的校验结果作废
+    setCouponState(null);
+  }
+
+  const cartItems = () => product.variants
+    .filter((v) => (qty[v.id] ?? 0) > 0)
+    .map((v) => ({ variantId: v.id, quantity: qty[v.id] }));
+
+  async function applyCoupon() {
+    const code = coupon.trim();
+    if (!code || boxes === 0) return;
+    setCouponBusy(true);
+    try {
+      const res = await fetch("/api/coupon/preview", {
+        method: "POST", headers: { "content-type": "application/json" },
+        body: JSON.stringify({ code, items: cartItems() }),
+      });
+      const d = await res.json();
+      setCouponState({ ok: !!d.ok, message: d.message ?? "", discount: d.discount ?? 0 });
+    } catch {
+      setCouponState({ ok: false, message: zh ? "校验失败，请重试" : "Could not check the code", discount: 0 });
+    } finally {
+      setCouponBusy(false);
+    }
   }
 
   async function checkout() {
@@ -65,6 +94,7 @@ export function OrderForm({ locale, batch, product, flavours, prices, t, signedI
         body: JSON.stringify({
           locale, batchId: batch.id, slotId,
           contact: { name: name.trim(), phone: phone.trim(), email: email.trim(), giftMessage: gift.trim() || null },
+          couponCode: couponState?.ok ? coupon.trim() : null,
           items: product.variants
             .filter((v) => (qty[v.id] ?? 0) > 0)
             .map((v) => ({
@@ -78,6 +108,11 @@ export function OrderForm({ locale, batch, product, flavours, prices, t, signedI
       if (res.status === 401 && data.loginRequired) {
         const back = encodeURIComponent(`/${locale}/order`);
         window.location.href = `/${locale}/login?next=${back}`;
+        return;
+      }
+      if (res.status === 409 && data.error === "coupon_rejected") {
+        setCouponState({ ok: false, message: data.message, discount: 0 });
+        setError(data.message);
         return;
       }
       if (!res.ok) throw new Error(data.error ?? "checkout failed");
@@ -202,9 +237,47 @@ export function OrderForm({ locale, batch, product, flavours, prices, t, signedI
 
       {/* 结算 */}
       <aside className="summary">
+        <div className="coupon-box">
+          <label htmlFor="coupon">{zh ? "优惠码" : "Promo code"}</label>
+          <div className="coupon-row">
+            <input id="coupon" className="field" value={coupon} autoComplete="off"
+              placeholder={zh ? "有就填，没有留空" : "Optional"}
+              onChange={(e) => { setCoupon(e.target.value.toUpperCase()); setCouponState(null); }} />
+            <button type="button" className="coupon-apply"
+              onClick={applyCoupon} disabled={!coupon.trim() || boxes === 0 || couponBusy}>
+              {couponBusy ? (zh ? "校验中" : "Checking") : (zh ? "应用" : "Apply")}
+            </button>
+          </div>
+          {couponState && (
+            <p className={couponState.ok ? "coupon-ok" : "coupon-bad"}>
+              {couponState.ok
+                ? `${couponState.message} −${formatCents(couponState.discount, locale)}`
+                : couponState.message}
+            </p>
+          )}
+        </div>
+
+        {couponState?.ok && couponState.discount > 0 && (
+          <div className="summary-line">
+            <span>{zh ? "小计" : "Subtotal"}</span>
+            <span>{formatCents(subtotal, locale)}</span>
+          </div>
+        )}
+        {couponState?.ok && couponState.discount > 0 && (
+          <div className="summary-line summary-line-off">
+            <span>{zh ? "优惠" : "Discount"}</span>
+            <span>−{formatCents(couponState.discount, locale)}</span>
+          </div>
+        )}
+
         <div className="summary-total">
-          <span>{t.subtotal}</span>
-          <strong>{formatCents(subtotal, locale)}</strong>
+          <span>{couponState?.ok && couponState.discount > 0 ? (zh ? "应付" : "Total") : t.subtotal}</span>
+          <strong>
+            {formatCents(
+              couponState?.ok ? Math.max(subtotal - couponState.discount, 0) : subtotal,
+              locale
+            )}
+          </strong>
         </div>
         <div className="summary-meta">
           {zh ? `${boxes} 盒 · 本期剩余 ${remaining} 盒` : `${boxes} boxes · ${remaining} left this drop`}

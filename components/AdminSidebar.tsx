@@ -23,6 +23,7 @@ const GROUPS: { title: string; items: { href: string; label: string }[] }[] = [
     title: "顾客",
     items: [
       { href: "/admin/waitlist", label: "候补名单" },
+      { href: "/admin/coupons", label: "优惠券" },
       { href: "/admin/campaigns", label: "邮件群发" },
     ],
   },
