@@ -111,10 +111,14 @@ export async function markOrderPaid(args: {
   method: string;
   eventId: string;
   paymentRef?: string | null;
+  paymentIntentRef?: string | null;
   totalCents?: number | null;
   contact?: Partial<Contact>;
 }): Promise<{ ok: boolean; alreadyDone?: boolean }> {
-  const { orderNo, method, eventId, paymentRef = null, totalCents = null, contact } = args;
+  const {
+    orderNo, method, eventId, paymentRef = null, paymentIntentRef = null,
+    totalCents = null, contact,
+  } = args;
 
   if (!(await claimEvent(eventId, "payment.succeeded"))) return { ok: true, alreadyDone: true };
 
@@ -126,6 +130,7 @@ export async function markOrderPaid(args: {
     paid_at: new Date().toISOString(),
     payment_method: method,
     payment_ref: paymentRef,
+    payment_intent_ref: paymentIntentRef,
     expires_at: null,          // 已付款，不再受锁定过期影响
   };
   if (totalCents != null) patch.total_cents = totalCents;
@@ -154,10 +159,22 @@ export async function releaseOrderHold(
   if (error) throw new Error(error.message);
 }
 
-export async function markOrderRefunded(paymentRef: string): Promise<void> {
+/**
+ * 退款。charge.refunded 只带 payment_intent，而 payment_ref 存的是
+ * Checkout Session id（cs_…），两者不是一回事——按 payment_ref 匹配
+ * 永远查不到单。所以付款时把 payment_intent 单独记进 payment_intent_ref。
+ */
+export async function markOrderRefunded(paymentIntentRef: string): Promise<void> {
   const db = serviceClient();
   if (!db) return;
-  await db.from("orders").update({ status: "refunded" }).eq("payment_ref", paymentRef);
+  const { data, error } = await db.from("orders")
+    .update({ status: "refunded" })
+    .eq("payment_intent_ref", paymentIntentRef).select("id");
+  if (error) throw new Error(error.message);
+  if (!data?.length) {
+    // 查不到单说明数据对不上，要能在日志里看见，而不是静默跳过
+    console.error("[refund] 找不到对应订单", paymentIntentRef);
+  }
 }
 
 /** 按订单号取单，供支付页和成功页用 */

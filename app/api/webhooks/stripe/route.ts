@@ -45,6 +45,9 @@ export async function POST(req: Request) {
           method: session.payment_method_types?.[0] ?? "card",
           eventId: event.id,                       // Stripe 会重推，靠它幂等
           paymentRef: session.id,
+          // 退款事件只带 payment_intent，付款时不记下来，以后就对不上单
+          paymentIntentRef: typeof session.payment_intent === "string"
+            ? session.payment_intent : null,
           totalCents: session.amount_total ?? null,
           contact: {
             name: session.customer_details?.name ?? undefined,

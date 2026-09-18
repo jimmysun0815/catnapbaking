@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { getIsTeaser } from "@/lib/site-mode";
 import { normalizeSiteUrl } from "@/lib/site";
 import { z } from "zod";
-import { stripe, stripeConfigured, paymentMethodTypes } from "@/lib/stripe";
+import { stripe, stripeConfigured, INTEGRATION_ID } from "@/lib/stripe";
 import { getCurrentBatch, getProducts, effectivePrice } from "@/lib/data";
 import { createPendingOrder, validateOrder, releaseOrderHold, HOLD_MINUTES } from "@/lib/orders";
 import { serviceClient } from "@/lib/supabase";
@@ -102,6 +102,13 @@ export async function POST(req: Request) {
   const s = stripe()!;
   const origin = normalizeSiteUrl(process.env.NEXT_PUBLIC_SITE_URL) ?? new URL(req.url).origin;
 
+  // Stripe 要求 expires_at 至少比「它收到请求的那一刻」晚 30 分钟。
+  // expiresAt 是建单前算的，中间隔着数据库写入和网络往返，直接用会卡在
+  // 29:5x 被拒。取两者较晚的一个，留出余量。
+  const stripeExpiresAt = Math.floor(
+    Math.max(expiresAt.getTime(), Date.now() + (HOLD_MINUTES + 2) * 60_000) / 1000
+  );
+
   // 折扣用一次性 Stripe 券传过去。不改 line_items 单价：
   // 按比例摊到每行会产生分位舍入，和库里记的 total 对不上
   const stripeDiscounts = discount > 0
@@ -114,11 +121,10 @@ export async function POST(req: Request) {
   const session = await s.checkout.sessions.create({
     mode: "payment",
     locale: locale === "zh" ? "zh" : "en",
-    payment_method_types: paymentMethodTypes(),
     currency: "cad",
     customer_email: contact.email,
     // 到点由 Stripe 推送 checkout.session.expired，据此释放名额，不用 cron 轮询
-    expires_at: Math.floor(expiresAt.getTime() / 1000),
+    expires_at: stripeExpiresAt,
     line_items: valid.map((l) => ({
       quantity: l.quantity,
       price_data: {
@@ -133,6 +139,7 @@ export async function POST(req: Request) {
       },
     })),
     discounts: stripeDiscounts,
+    integration_identifier: INTEGRATION_ID,
     metadata: {
       order_no: orderNo, batch_id: batch!.id, slot_id: slotId, locale,
       coupon_code: couponCode ?? "", discount_cents: String(discount),
@@ -143,7 +150,12 @@ export async function POST(req: Request) {
 
   const db = serviceClient();
   if (db && orderId) {
-    await db.from("orders").update({ payment_ref: session.id }).eq("id", orderId);
+    // 名额真正的释放时机由 Stripe 的 session 过期决定，
+    // 库里存它返回的实际值，倒计时才不会和现实对不上
+    await db.from("orders").update({
+      payment_ref: session.id,
+      expires_at: new Date((session.expires_at ?? stripeExpiresAt) * 1000).toISOString(),
+    }).eq("id", orderId);
   }
 
   return NextResponse.json({
