@@ -103,19 +103,21 @@ img { max-width: 100%; }
 .zh-hero { background: radial-gradient(circle at 13% 22%, rgba(230, 194, 120, .2), transparent 25%), #f5f0e6; }
 .hero-copy { align-self: center; padding: 42px 7vw 50px 0; position: relative; z-index: 2; }
 .kicker { align-items: center; color: #8a6853; display: flex; font-size: 10px; gap: 9px; letter-spacing: .16em; margin-bottom: 36px; }
-.zh-hero h1 { font-family: "Noto Serif SC", serif; font-size: clamp(47px, 6vw, 86px); font-weight: 500; letter-spacing: -.06em; line-height: 1.12; margin: 0; }
+.zh-hero h1 { font-family: "Noto Serif SC", serif; font-size: clamp(42px, 5vw, 86px); font-weight: 500; letter-spacing: -.06em; line-height: 1.12; margin: 0; }
 .zh-hero h1 em, .zh-statement h2 span, .zh-ritual h2 em, .zh-pickup h2 em { color: #b65f3e; font-style: normal; }
 
 /* CFIA 比较型营养声明的法定说明，必须与主张同屏 */
 .claim-note { border-top: 1px solid rgba(138, 104, 83, .35); color: #8a6853; font-size: 11px; letter-spacing: .02em; line-height: 1.8; margin: 18px 0 0; max-width: 380px; padding-top: 10px; }
-.hero-lede { color: #6c5042; font-size: 15px; line-height: 2; margin: 24px 0 34px; }
+.hero-lede { color: #6c5042; font-size: 15px; line-height: 2; margin: 24px 0 0; }
+.hero-lede-second { margin-bottom: 34px; }
 .hero-cta-row { align-items: center; display: flex; flex-wrap: wrap; gap: 24px; }
 .hero-proof { align-items: center; color: #826b5a; display: flex; flex-wrap: wrap; font-size: 10px; gap: 10px; letter-spacing: .06em; margin-top: 60px; }
 .hero-proof span { align-items: center; display: inline-flex; gap: 8px; }
 .hero-image-frame { align-self: center; background: #e7b969; border-radius: 210px 210px 8px 8px; box-shadow: 0 24px 70px rgba(77, 48, 29, .19); height: min(590px, 65vw); margin-left: auto; max-height: 590px; max-width: 610px; overflow: hidden; position: relative; width: 100%; }
 .hero-image-frame::after { background: linear-gradient(180deg, rgba(26, 20, 17, .04), rgba(26, 20, 17, .18)); content: ""; inset: 0; position: absolute; pointer-events: none; }
-.image-sticker { align-items: center; background: #e9bb67; border-radius: 50%; color: #39251e; display: flex; flex-direction: column; font-family: "Noto Serif SC", serif; height: 102px; justify-content: center; line-height: 1.2; position: absolute; right: 7%; top: 9%; transform: rotate(11deg); width: 102px; z-index: 3; }
+.image-sticker { align-items: center; background: #e9bb67; border-radius: 50%; color: #39251e; display: flex; flex-direction: column; font-family: "Noto Serif SC", serif; height: 102px; justify-content: center; line-height: 1.2; position: absolute; right: 9%; top: 16%; transform: rotate(11deg); width: 102px; z-index: 3; }
 .image-sticker strong { font-size: 40px; font-weight: 500; line-height: .9; }
+.image-sticker .sticker-lines { font-size: 17px; letter-spacing: .06em; line-height: 1.4; text-align: center; }
 .image-sticker span { font-size: 11px; }
 .hero-caption { bottom: 20px; color: #fff8ee; display: flex; font-size: 10px; justify-content: space-between; left: 25px; letter-spacing: .11em; position: absolute; right: 25px; z-index: 3; }
 
@@ -511,14 +513,15 @@ img { max-width: 100%; }
   .brand-mark-wrap { height: 37px; width: 37px; }
   .brand-name strong { font-size: 11px; }
   .brand-name small { font-size: 7px; }
-  .hero-shell { display: block; min-height: auto; padding: 60px 20px 50px; }
-  .hero-copy { padding: 20px 0 44px; }
+  .hero-shell { display: block; min-height: auto; padding: 28px 20px 50px; }
+  .hero-copy { padding: 0 0 44px; }
   .zh-hero h1 { font-size: clamp(45px, 13vw, 72px); }
   .hero-lede { font-size: 13px; }
   .hero-proof { gap: 8px; margin-top: 38px; }
   .hero-image-frame { height: 108vw; max-height: none; width: 100%; }
   .image-sticker { height: 82px; width: 82px; }
   .image-sticker strong { font-size: 32px; }
+  .image-sticker .sticker-lines { font-size: 14px; }
   .section-pad, .page-shell { padding-left: 20px; padding-right: 20px; }
   .zh-statement { padding-bottom: 84px; padding-top: 68px; }
   .statement-content { display: block; margin-top: 40px; }

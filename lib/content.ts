@@ -13,12 +13,23 @@ export const zh = {
 
   hero: {
     eyebrow: "秘方配方 · 小批量手工",
-    headline: "减糖 70%",
-    // CFIA 比较型营养声明：必须点明参照物与每份差值，与主张同屏显示
+    headline: "甜一点的日子",
+    headlineAccent: "不必太甜。",
+    // CFIA 比较型营养声明用的说明文案。2026-09-18 起首页不再渲染（站主决定），
+    // 字符串保留以便随时恢复。见 HomeZh.tsx 顶部说明。
     claimFootnote: "相比我们的经典配方，每块含糖 4.2 g（经典配方 14 g）",
-    lead: "外缘脆，中心软。糖减下来，黄油、巧克力和面粉一样不省。",
+    lead: "把糖收低，把巧克力、茶香和黄油的香气留出来。",
+    leadSecond: "一盒手工曲奇，送给值得慢慢吃的人。",
     cta: "查看本期开单",
     ctaClosed: "查看下期预告",
+  },
+
+  statement: {
+    eyebrow: "不太甜，是一种生活方式",
+    heading: "我们不想做",
+    headingAccent: "吃完只剩下甜",
+    headingTail: "的曲奇",
+    body: "秘方配方减少 70% 糖用量，让可可的深度、抹茶的回甘和坚果的香气自己说话。甜度收低，也让每一口更轻盈。",
   },
 
   pillars: {

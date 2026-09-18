@@ -25,7 +25,7 @@ const EN_NAV = [
 const ZH_NAV_TEASER = [
   { href: "#why", label: "为什么不太甜" },
   { href: "#ritual", label: "我们的方式" },
-  { href: "#notify", label: "开门通知我" },
+  { href: "#notify", label: "开业通知" },
 ];
 const EN_NAV_TEASER = [
   { href: "#story", label: "Our story" },
@@ -87,7 +87,7 @@ export function Header({
 
         {isTeaser ? (
           <a href="#notify" className={`order-button ${zh ? "" : "order-button-dark"}`}>
-            {zh ? "开门通知我" : "Notify me"}
+            {zh ? "订阅开业通知" : "Notify me"}
             <ArrowUpRight size={16} strokeWidth={1.8} />
           </a>
         ) : (

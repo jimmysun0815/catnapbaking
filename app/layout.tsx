@@ -6,7 +6,7 @@ export const metadata: Metadata = {
   // OG 图用相对路径写，靠这个拼成绝对地址；微信只认绝对地址
   metadataBase: new URL(SITE_URL),
   title: "不太甜研究所 · Cat Nap Baking",
-  description: "手工曲奇，Richmond BC 每周现烤。Handmade cookies baked weekly in Richmond, BC.",
+  description: "手工曲奇，Richmond BC 新鲜现烤。Handmade cookies, freshly baked in Richmond, BC.",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

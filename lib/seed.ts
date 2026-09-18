@@ -45,7 +45,7 @@ export const PRODUCTS: Product[] = [
     slug: "cookies",
     name_zh: "手工曲奇",
     name_en: "Handmade Cookies",
-    desc_zh: "每周现烤，小批量制作。",
+    desc_zh: "新鲜现烤，小批量制作。",
     desc_en: "Baked fresh once a week, in small batches.",
     // 初期单一产品，后台可改成 single 或 mix
     flavour_mode: "none",

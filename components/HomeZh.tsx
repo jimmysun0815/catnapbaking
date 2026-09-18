@@ -12,14 +12,17 @@ import type { Batch, Flavour, Product } from "@/lib/types";
 
 /**
  * 中文首页 = 安静的茶室编辑感。
- * 核心主张「减糖 70%」按 CFIA 规则，参照物与每份克数必须与主张同屏，
- * 就是 h1 下面那行 .claim-note，不要删。
+ *
+ * 注意：h1 下方原有一行 .claim-note，写着参照物与每块含糖量，
+ * 用于满足 CFIA 对「减糖 70%」这类比较型营养声明的说明要求。
+ * 2026-09-18 站主要求移除，合规风险已告知并由站主承担。
+ * 要恢复就把 content.ts 的 hero.claimFootnote 渲染回 h1 下面。
  */
 /** 预热期讲手艺，不讲怎么买 */
 const CRAFT_STEPS = [
   { n: "01", t: "选料", d: "只用我们愿意放在自己茶杯旁边的原料。黄油、面粉、鸡蛋都来自加拿大本地。" },
-  { n: "02", t: "配方", d: "把糖收低，让可可、茶香和黄油的味道自己出来。前后试了几十版。" },
-  { n: "03", t: "手工", d: "小批量、手工整形。出炉后静置十几分钟定型，这一步决定外脆内软。" },
+  { n: "02", t: "配方", d: "把糖收低，让可可、茶香和黄油的味道自己出来。每一款配方都经过反复试验与持续改良。" },
+  { n: "03", t: "分享", d: "适合送礼，也适合留一块给明天。" },
 ];
 
 export function HomeZh({
@@ -46,16 +49,15 @@ export function HomeZh({
         {/* ---------------------------------------------------- 主张 */}
         <section className="zh-hero hero-shell">
           <div className="hero-copy">
-            <div className="kicker"><span className="kicker-dot" /> Richmond · Vancouver / 每周现烤</div>
-            <h1>{t.hero.headline}</h1>
-            {/* CFIA 比较型营养声明的法定说明 */}
-            <p className="claim-note">{t.hero.claimFootnote}</p>
+            <div className="kicker"><span className="kicker-dot" /> Richmond · Vancouver / 手工现烤</div>
+            <h1>{t.hero.headline}<br /><em>{t.hero.headlineAccent}</em></h1>
             <p className="hero-lede">{t.hero.lead}</p>
+            <p className="hero-lede hero-lede-second">{t.hero.leadSecond}</p>
 
             <div className="hero-cta-row">
               {isTeaser ? (
                 <a href="#notify" className="order-button">
-                  开门时通知我
+                  订阅开业通知
                   <ArrowUpRight size={16} strokeWidth={1.8} />
                 </a>
               ) : (
@@ -77,17 +79,19 @@ export function HomeZh({
           </div>
 
           <div className="hero-image-frame">
+            {/* 首屏 LCP：loading 必须显式 eager，默认的 lazy 会让初次渲染只有金色底 */}
             <Image
               src="/brand/04.jpg"
               alt="掰开的巧克力豆曲奇，外缘脆、中心软"
               fill
+              loading="eager"
               fetchPriority="high"
               sizes="(max-width: 680px) 100vw, (max-width: 1100px) 50vw, 610px"
               style={{ objectFit: "cover", objectPosition: "center" }}
             />
             <div className="image-sticker">
               {isTeaser
-                ? <><span>即将</span><strong>✦</strong><span>开张</span></>
+                ? <span className="sticker-lines">即将<br />开张</span>
                 : <><span>每周</span><strong>1</strong><span>次烘焙</span></>}
             </div>
             <div className="hero-caption">
@@ -102,12 +106,16 @@ export function HomeZh({
           <div className="section-index">01 <span>/</span> philosophy</div>
           <div className="statement-content">
             <div>
-              <p className="eyebrow">不太甜，是一种分寸感</p>
-              <h2>糖退到背景，<br /><span>味道才站得出来。</span></h2>
+              <p className="eyebrow">{t.statement.eyebrow}</p>
+              <h2>
+                {t.statement.heading}<br />
+                <span>{t.statement.headingAccent}</span><br />
+                {t.statement.headingTail}
+              </h2>
             </div>
             <div className="statement-right">
-              <p>{t.pillars.items[0].d}</p>
-              <p className="muted-note">小批量 · 手工整形 · Richmond 共享厨房烘焙</p>
+              <p>{t.statement.body}</p>
+              <p className="muted-note">持牌商用厨房 · 非家庭作坊 · 用料考究 · 吃着放心</p>
               <a className="circle-link" href="#ritual" aria-label="了解更多"><ArrowUpRight size={19} /></a>
             </div>
           </div>
@@ -216,10 +224,10 @@ export function HomeZh({
         {isTeaser && (
         <section className="zh-waitlist section-pad" id="notify">
           <div className="section-index">03 <span>/</span> stay in touch</div>
-          <h2>开门那天，<br /><em>第一个告诉你。</em></h2>
+          <h2>开业之时，<br /><em>第一时间通知您。</em></h2>
           <p className="waitlist-lede">
-            我们正在筹备，还在调配方、办证照、找厨房。
-            留个邮箱，第一炉出炉前会通知你。不群发广告，只发这一封。
+            我们仍在为开业做准备。
+            留下邮箱，开业前将第一时间以邮件通知您，您可随时退订。
           </p>
           <Waitlist locale="zh" source="home-zh" />
         </section>

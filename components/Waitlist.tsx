@@ -10,8 +10,8 @@ import type { Locale } from "@/lib/types";
  * 以后真被投诉了拿得出证据。改这里的文案，存证也会跟着变。
  */
 const CONSENT = {
-  zh: "我同意 Cat Nap Baking Ltd. 在开始接单时用邮件通知我。随时可退订。",
-  en: "I agree to let Cat Nap Baking Ltd. email me when ordering opens. Unsubscribe any time.",
+  zh: "本人同意 Cat Nap Baking Ltd. 以邮件发送开业通知、新品与优惠信息，并可随时退订。",
+  en: "I agree to receive emails from Cat Nap Baking Ltd. about our opening, new products and promotions. I can unsubscribe at any time.",
 };
 
 export function Waitlist({ locale, source = "home" }: { locale: Locale; source?: string }) {
@@ -49,8 +49,8 @@ export function Waitlist({ locale, source = "home" }: { locale: Locale; source?:
         </h3>
         <p>
           {zh
-            ? "第一炉出炉前我们会发邮件通知你。在那之前不会拿这个邮箱做别的事。"
-            : "We'll email you before the first bake comes out. Nothing else, ever."}
+            ? "开业前我们将以邮件通知您。您可随时退订。"
+            : "We'll email you before we open. You can unsubscribe at any time."}
         </p>
       </div>
     );
@@ -68,7 +68,7 @@ export function Waitlist({ locale, source = "home" }: { locale: Locale; source?:
           onChange={(e) => { setEmail(e.target.value); if (state === "error") setState("idle"); }}
         />
         <button type="submit" className="waitlist-cta" disabled={state === "busy" || !email.includes("@")}>
-          {state === "busy" ? (zh ? "提交中…" : "Sending…") : zh ? "通知我" : "Notify me"}
+          {state === "busy" ? (zh ? "提交中…" : "Sending…") : zh ? "订阅" : "Notify me"}
           <ArrowUpRight size={15} />
         </button>
       </div>

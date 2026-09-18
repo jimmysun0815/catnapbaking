@@ -25,11 +25,11 @@ export async function generateMetadata(
 
   const description = isTeaser
     ? (zh
-        ? "减糖 70% 的手工曲奇，正在 Richmond BC 筹备中。留个邮箱，开门时通知你。"
+        ? "减糖 70% 的手工曲奇，正在 Richmond BC 筹备中。留下邮箱，开业时以邮件通知您。"
         : "Handmade cookies, coming soon to Richmond, BC. Leave your email and we'll tell you when we open.")
     : (zh
-        ? "外脆内软的手工曲奇，Richmond BC 每周现烤，限量发售，周日自取。"
-        : "Crisp edges, soft centres. Canadian-owned, baked weekly in Richmond, BC.");
+        ? "外脆内软的手工曲奇，Richmond BC 新鲜现烤，限量发售，周日自取。"
+        : "Crisp edges, soft centres. Canadian-owned, freshly baked in Richmond, BC.");
   const image = zh ? "/brand/og-zh.png" : "/brand/og-en.png";
 
   return {
