@@ -5,7 +5,7 @@ import { mockPaymentsEnabled } from "@/lib/payments";
 import { getOrderByNo } from "@/lib/orders";
 import { usingDemoData } from "@/lib/data";
 import type { Locale } from "@/lib/types";
-import { isTeaser } from "@/lib/site-mode";
+import { getIsTeaser } from "@/lib/site-mode";
 
 export const dynamic = "force-dynamic";
 
@@ -16,7 +16,7 @@ export default async function PayPage({
   const locale = raw as Locale;
 
   // 预热期下单相关页面一律回首页
-  if (isTeaser) redirect(`/${locale}`);
+  if (await getIsTeaser()) redirect(`/${locale}`);
 
   // Stripe 接入后这个页面不该再被访问到
   if (!mockPaymentsEnabled) redirect(`/${locale}/order`);

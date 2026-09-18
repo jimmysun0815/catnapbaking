@@ -7,7 +7,7 @@ import { getSessionUser } from "@/lib/supabase/server";
 import { Countdown, CapacityMeter } from "@/components/BatchStatus";
 import { OrderForm } from "@/components/OrderForm";
 import type { Locale } from "@/lib/types";
-import { isTeaser } from "@/lib/site-mode";
+import { getIsTeaser } from "@/lib/site-mode";
 
 // 实时库存，静态化会导致超卖
 export const dynamic = "force-dynamic";
@@ -17,7 +17,7 @@ export default async function OrderPage({ params }: { params: Promise<{ locale: 
   const locale = raw as Locale;
 
   // 预热期下单相关页面一律回首页
-  if (isTeaser) redirect(`/${locale}`);
+  if (await getIsTeaser()) redirect(`/${locale}`);
   const zh = locale === "zh";
   const t = content(locale);
 
@@ -27,12 +27,13 @@ export default async function OrderPage({ params }: { params: Promise<{ locale: 
   const nav = user ? { name: user.name, email: user.email, isAdmin: user.isAdmin } : null;
   const product = products[0];
 
+  // 预热期本页在上面已经 redirect 了，能走到这里必然是 live
   const shell = (children: React.ReactNode) => (
     <div className={`site ${zh ? "zh-site" : "en-site"}`}>
       {!zh && <div className="en-noise" />}
-      <Header locale={locale} user={nav} />
+      <Header locale={locale} user={nav} isTeaser={false} />
       <main>{children}</main>
-      <Footer locale={locale} />
+      <Footer locale={locale} isTeaser={false} />
     </div>
   );
 

@@ -7,7 +7,7 @@ import { effectivePrice } from "@/lib/data";
 import { Header, Footer, type NavUser } from "@/components/SiteChrome";
 import { CatMarkLarge } from "@/components/BrandMark";
 import { Waitlist } from "@/components/Waitlist";
-import { isTeaser } from "@/lib/site-mode";
+import { getIsTeaser } from "@/lib/site-mode";
 import type { Batch, Flavour, Product } from "@/lib/types";
 
 /**
@@ -25,9 +25,10 @@ const CRAFT_STEPS = [
   { n: "03", t: "分享", d: "适合送礼，也适合留一块给明天。" },
 ];
 
-export function HomeZh({
+export async function HomeZh({
   batch, product, flavours, user = null,
 }: { batch: Batch | null; product: Product; flavours: Flavour[]; user?: NavUser }) {
+  const isTeaser = await getIsTeaser();
   const t = zh;
   const remaining = batch ? Math.max(0, batch.capacity_boxes - batch.boxes_taken) : 0;
   const open = batch?.status === "open" && remaining > 0;
@@ -43,7 +44,7 @@ export function HomeZh({
 
   return (
     <div className="site zh-site">
-      <Header locale="zh" anchors user={user} />
+      <Header locale="zh" anchors user={user} isTeaser={isTeaser} />
 
       <main>
         {/* ---------------------------------------------------- 主张 */}
@@ -234,7 +235,7 @@ export function HomeZh({
         )}
       </main>
 
-      <Footer locale="zh" />
+      <Footer locale="zh" isTeaser={isTeaser} />
     </div>
   );
 }

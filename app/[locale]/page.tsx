@@ -1,5 +1,6 @@
 import { getCurrentBatch, getFlavours, getProducts } from "@/lib/data";
 import { getSessionUser } from "@/lib/supabase/server";
+import { getIsTeaser } from "@/lib/site-mode";
 import { HomeZh } from "@/components/HomeZh";
 import { HomeEn } from "@/components/HomeEn";
 
@@ -8,13 +9,13 @@ export const dynamic = "force-dynamic";
 
 export default async function HomePage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
-  const [batch, products, flavours, user] = await Promise.all([
-    getCurrentBatch(), getProducts(), getFlavours(), getSessionUser(),
+  const [batch, products, flavours, user, isTeaser] = await Promise.all([
+    getCurrentBatch(), getProducts(), getFlavours(), getSessionUser(), getIsTeaser(),
   ]);
   const product = products[0];
   const nav = user ? { name: user.name, email: user.email, isAdmin: user.isAdmin } : null;
 
   return locale === "zh"
     ? <HomeZh batch={batch} product={product} flavours={flavours} user={nav} />
-    : <HomeEn batch={batch} product={product} flavours={flavours} user={nav} />;
+    : <HomeEn batch={batch} product={product} flavours={flavours} user={nav} isTeaser={isTeaser} />;
 }

@@ -5,7 +5,7 @@ import { getSessionUser } from "@/lib/supabase/server";
 import { formatCents } from "@/lib/money";
 import { PageShell } from "@/components/PageShell";
 import type { Locale } from "@/lib/types";
-import { isTeaser } from "@/lib/site-mode";
+import { getIsTeaser } from "@/lib/site-mode";
 
 // 顾客自己的订单，必须实时读取
 export const dynamic = "force-dynamic";
@@ -15,7 +15,7 @@ export default async function AccountPage({ params }: { params: Promise<{ locale
   const locale = raw as Locale;
 
   // 预热期下单相关页面一律回首页
-  if (isTeaser) redirect(`/${locale}`);
+  if (await getIsTeaser()) redirect(`/${locale}`);
   const zh = locale === "zh";
 
   const user = await getSessionUser();

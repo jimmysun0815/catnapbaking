@@ -5,7 +5,6 @@ import { useState } from "react";
 import { ArrowUpRight, Menu, X } from "lucide-react";
 import { BrandLockup } from "./BrandMark";
 import { content } from "@/lib/content";
-import { isTeaser } from "@/lib/site-mode";
 import type { Locale } from "@/lib/types";
 
 const ZH_NAV = [
@@ -36,8 +35,8 @@ const EN_NAV_TEASER = [
 export type NavUser = { name: string | null; email: string; isAdmin: boolean } | null;
 
 export function Header({
-  locale, anchors = false, user = null,
-}: { locale: Locale; anchors?: boolean; user?: NavUser }) {
+  locale, anchors = false, user = null, isTeaser,
+}: { locale: Locale; anchors?: boolean; user?: NavUser; isTeaser: boolean }) {
   const [open, setOpen] = useState(false);
   const zh = locale === "zh";
   const t = content(locale);
@@ -110,7 +109,7 @@ export function Header({
   );
 }
 
-export function Footer({ locale }: { locale: Locale }) {
+export function Footer({ locale, isTeaser }: { locale: Locale; isTeaser: boolean }) {
   const zh = locale === "zh";
   const t = content(locale);
   return (

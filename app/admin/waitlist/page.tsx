@@ -1,5 +1,5 @@
 import { serviceClient } from "@/lib/supabase";
-import { siteMode } from "@/lib/site-mode";
+import { getSiteMode } from "@/lib/site-mode";
 import { requireAdmin } from "@/lib/admin-guard";
 
 export const dynamic = "force-dynamic";
@@ -12,6 +12,7 @@ type Row = {
 /** 预热期留邮箱的人。开业时按这份名单群发通知 */
 export default async function WaitlistAdmin() {
   await requireAdmin();
+  const siteMode = await getSiteMode();
   const db = serviceClient();
   const { data } = db
     ? await db.from("waitlist").select("*").order("consented_at", { ascending: false })

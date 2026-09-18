@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { isTeaser } from "@/lib/site-mode";
+import { getIsTeaser } from "@/lib/site-mode";
 import { normalizeSiteUrl } from "@/lib/site";
 import { z } from "zod";
 import { stripe, stripeConfigured, paymentMethodTypes } from "@/lib/stripe";
@@ -28,7 +28,7 @@ const Body = z.object({
 
 export async function POST(req: Request) {
   // 预热期还没开张，下单接口一律关闭
-  if (isTeaser) return NextResponse.json({ error: "not_open_yet" }, { status: 404 });
+  if (await getIsTeaser()) return NextResponse.json({ error: "not_open_yet" }, { status: 404 });
 
   const parsed = Body.safeParse(await req.json().catch(() => null));
   if (!parsed.success) {

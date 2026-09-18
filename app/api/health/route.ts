@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { isConfigured, canWrite, serviceClient } from "@/lib/supabase";
 import { stripeConfigured } from "@/lib/stripe";
 import { mockPaymentsEnabled } from "@/lib/payments";
-import { siteMode } from "@/lib/site-mode";
+import { getSiteMode } from "@/lib/site-mode";
 
 /**
  * 配完环境变量后打开 /api/health 自检。
@@ -10,7 +10,7 @@ import { siteMode } from "@/lib/site-mode";
  */
 export async function GET() {
   const checks: Record<string, unknown> = {
-    site_mode: siteMode,
+    site_mode: await getSiteMode(),
     supabase_configured: isConfigured,
     supabase_can_write: canWrite,
     stripe_configured: stripeConfigured,

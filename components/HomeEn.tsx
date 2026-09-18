@@ -7,7 +7,6 @@ import { en } from "@/lib/content";
 import { Header, Footer, type NavUser } from "@/components/SiteChrome";
 import { GiantCookie } from "@/components/CookieArt";
 import { Waitlist } from "@/components/Waitlist";
-import { isTeaser } from "@/lib/site-mode";
 import type { Batch, Flavour, Product } from "@/lib/types";
 
 const TONES = ["#ee7156", "#f3c67c", "#9c8bf2"];
@@ -18,8 +17,8 @@ const TONES = ["#ee7156", "#f3c67c", "#9c8bf2"];
  * CFIA：可可、蔗糖、香草不产自加拿大，所以 .origin-note 那行不能删。
  */
 export function HomeEn({
-  batch, flavours, user = null,
-}: { batch: Batch | null; product: Product; flavours: Flavour[]; user?: NavUser }) {
+  batch, flavours, user = null, isTeaser,
+}: { batch: Batch | null; product: Product; flavours: Flavour[]; user?: NavUser; isTeaser: boolean }) {
   const t = en;
   const remaining = batch ? Math.max(0, batch.capacity_boxes - batch.boxes_taken) : 0;
   const open = batch?.status === "open" && remaining > 0;
@@ -38,7 +37,7 @@ export function HomeEn({
   return (
     <div className="site en-site">
       <div className="en-noise" />
-      <Header locale="en" anchors user={user} />
+      <Header locale="en" anchors user={user} isTeaser={isTeaser} />
 
       <main>
         {/* ---------------------------------------------------- hero */}
@@ -193,7 +192,7 @@ export function HomeEn({
         )}
       </main>
 
-      <Footer locale="en" />
+      <Footer locale="en" isTeaser={isTeaser} />
     </div>
   );
 }

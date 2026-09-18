@@ -31,6 +31,7 @@ const GROUPS: { title: string; items: { href: string; label: string }[] }[] = [
     items: [
       { href: "/admin/batches", label: "批次" },
       { href: "/admin/products", label: "商品与价格" },
+      { href: "/admin/settings", label: "站点模式" },
     ],
   },
 ];

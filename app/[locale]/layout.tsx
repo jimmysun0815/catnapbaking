@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { isTeaser } from "@/lib/site-mode";
+import { getIsTeaser } from "@/lib/site-mode";
 import { DemoBanner } from "@/components/DemoBanner";
 import type { Locale } from "@/lib/types";
 
@@ -17,6 +17,7 @@ export async function generateMetadata(
 ): Promise<Metadata> {
   const { locale } = await params;
   const zh = locale === "zh";
+  const isTeaser = await getIsTeaser();
 
   // 预热期不提开单、自取、限量这些运营信息
   const title = isTeaser

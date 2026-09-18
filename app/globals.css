@@ -527,6 +527,18 @@ img { max-width: 100%; }
 .campaign-row { align-items: center; display: flex; flex-wrap: wrap; gap: 12px; margin-top: 10px; }
 .campaign-ok { background: #ddebd8; color: #35502f; font-size: 12.5px; line-height: 1.8; margin-top: 18px; padding: 12px 16px; }
 
+/* --- 站点模式切换 --- */
+.mode-panel { margin-top: 26px; }
+.mode-cards { display: grid; gap: 16px; grid-template-columns: repeat(auto-fit, minmax(270px, 1fr)); }
+.mode-card { background: #ece1ce; border-left: 3px solid transparent; padding: 18px 20px; }
+.mode-card.is-current { background: #35251f; border-left-color: #e9bb67; color: #f4eadb; }
+.mode-card-head { align-items: center; display: flex; gap: 10px; justify-content: space-between; }
+.mode-card-head strong { font-family: "Noto Serif SC", serif; font-size: 16px; }
+.mode-card p { color: #6c5042; font-size: 12px; line-height: 1.9; margin: 10px 0 0; }
+.mode-card.is-current p { color: #d8c6ae; }
+.mode-actions { align-items: center; display: flex; flex-wrap: wrap; gap: 14px; margin-top: 24px; }
+.mode-warn { color: #a8433a; font-size: 12.5px; line-height: 1.7; max-width: 420px; }
+
 /* ---------------------------------------------------------- 响应式 */
 
 @media (max-width: 1000px) {
