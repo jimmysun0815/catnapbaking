@@ -18,7 +18,13 @@ export async function POST(req: Request) {
 
   const db = serviceClient();
   if (!db) {
-    // 没接数据库时也让前端走通，但明确告知没存下来
+    // 线上必须报错：静默返回成功会让顾客看到「记下了」，而邮箱根本没存下来，
+    // 且没有任何告警。宁可让顾客重试，也不能悄悄丢名单。
+    if (process.env.NODE_ENV === "production") {
+      console.error("[waitlist] 写入失败：缺少 SUPABASE_SECRET_KEY，候补邮箱未保存");
+      return NextResponse.json({ error: "not_configured" }, { status: 500 });
+    }
+    // 本地没配库时放行，方便把流程走通
     return NextResponse.json({ ok: true, stored: false });
   }
 
