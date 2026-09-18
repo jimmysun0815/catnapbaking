@@ -439,14 +439,32 @@ img { max-width: 100%; }
 
 /* ---------------------------------------------------------- 后台 */
 .admin { background: #f5f0e6; color: #33241e; font-family: "Noto Sans SC", "DM Sans", sans-serif; min-height: 100vh; }
-.admin-nav { align-items: center; background: #35251f; color: #f4eadb; display: flex; flex-wrap: wrap; gap: 10px 26px; padding: 15px clamp(20px, 4vw, 46px); }
-.admin-nav .admin-brand { align-items: center; display: inline-flex; font-family: "Noto Serif SC", serif; font-size: 15px; font-weight: 700; gap: 9px; letter-spacing: .04em; }
+/* --- 后台左侧导航 --- */
+.admin-shell { display: grid; grid-template-columns: 228px minmax(0, 1fr); }
+.admin-side { background: #35251f; color: #f4eadb; display: flex; flex-direction: column; gap: 30px; height: 100vh; padding: 22px 0 20px; position: sticky; top: 0; }
+.admin-side .admin-brand { align-items: center; color: inherit; display: flex; font-family: "Noto Serif SC", serif; font-size: 14.5px; font-weight: 700; gap: 9px; letter-spacing: .04em; padding: 0 20px; }
+.admin-side .admin-brand small { color: #c59e70; display: block; font-family: "Noto Sans SC", sans-serif; font-size: 9.5px; font-weight: 400; letter-spacing: .18em; margin-top: 2px; text-transform: uppercase; }
 .admin-mark { background: #e9bb67; border-radius: 50%; padding: 2px; }
-.admin-nav .eyebrow { color: #c59e70; }
-.admin-nav nav { display: flex; gap: 22px; margin-left: auto; flex-wrap: wrap; }
-.admin-nav nav a { font-size: 12px; letter-spacing: .06em; opacity: .72; transition: opacity .18s ease; }
-.admin-nav nav a:hover { opacity: 1; }
-.admin-main { margin: 0 auto; max-width: 1180px; padding: 40px clamp(20px, 4vw, 46px) 90px; }
+.admin-side nav { display: flex; flex-direction: column; gap: 24px; overflow-y: auto; }
+.admin-side-group { display: flex; flex-direction: column; }
+.admin-side-title { color: #8d6f55; font-size: 9.5px; letter-spacing: .18em; padding: 0 20px 8px; text-transform: uppercase; }
+.admin-side nav a { border-left: 2px solid transparent; color: inherit; font-size: 13px; letter-spacing: .03em; opacity: .66; padding: 9px 20px; transition: opacity .18s ease, background .18s ease; }
+.admin-side nav a:hover { background: rgba(244,234,219,.06); opacity: 1; }
+.admin-side nav a.is-active { background: rgba(233,187,103,.13); border-left-color: #e9bb67; color: #f6dcae; opacity: 1; }
+.admin-side-out { color: #c59e70; font-size: 11.5px; letter-spacing: .06em; margin-top: auto; opacity: .75; padding: 0 20px; }
+.admin-side-out:hover { opacity: 1; }
+.admin-burger { display: none; }
+.admin-main { margin: 0 auto; max-width: 1180px; padding: 40px clamp(20px, 4vw, 46px) 90px; width: 100%; }
+
+/* 窄屏：侧边栏抽屉化 */
+@media (max-width: 860px) {
+  .admin-shell { grid-template-columns: minmax(0, 1fr); }
+  .admin-burger { align-items: center; background: #35251f; border: 0; border-radius: 50%; color: #f4eadb; cursor: pointer; display: flex; height: 42px; justify-content: center; left: 14px; position: fixed; top: 14px; width: 42px; z-index: 60; }
+  .admin-side { left: 0; position: fixed; top: 0; transform: translateX(-100%); transition: transform .24s ease; width: 228px; z-index: 55; }
+  .admin-side.admin-side-open { transform: translateX(0); }
+  .admin-side-scrim { background: rgba(26,20,17,.45); inset: 0; position: fixed; z-index: 50; }
+  .admin-main { padding-top: 70px; }
+}
 .admin-main h1 { font-family: "Noto Serif SC", serif; font-size: 30px; font-weight: 500; letter-spacing: -.04em; margin: 0; }
 .admin-main h2 { font-family: "Noto Serif SC", serif; font-size: 19px; font-weight: 600; letter-spacing: -.03em; margin: 0; }
 .admin-head { align-items: baseline; display: flex; flex-wrap: wrap; gap: 14px; justify-content: space-between; }
@@ -478,6 +496,36 @@ img { max-width: 100%; }
 .pill-warn { background: #a8433a; color: #f8eadb; }
 .table-scroll { overflow-x: auto; }
 .admin-foot-note { border-top: 1px solid rgba(51,36,30,.16); color: #826b5a; font-size: 12px; line-height: 1.8; margin-top: 42px; padding-top: 16px; }
+
+/* --- 后台表单控件 --- */
+.link-btn { background: none; border: 0; border-bottom: 1px solid currentColor; color: #b65f3e; cursor: pointer; font: inherit; font-size: 12px; padding: 0 0 2px; }
+.link-btn:disabled { cursor: default; opacity: .5; }
+.admin-btn { background: #35251f; border: 0; color: #f4eadb; cursor: pointer; font: inherit; font-size: 12.5px; letter-spacing: .06em; padding: 10px 20px; }
+.admin-btn:disabled { cursor: default; opacity: .55; }
+.admin-btn-danger { background: #a8433a; }
+.row-editing td { background: #ece1ce; }
+.variant-form { display: grid; gap: 14px 20px; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); padding: 20px 16px; }
+.variant-form label { display: flex; flex-direction: column; gap: 6px; }
+.variant-form label > span { color: #8a6853; font-size: 10px; letter-spacing: .12em; text-transform: uppercase; }
+.variant-check { align-items: center; flex-direction: row !important; grid-column: 1 / -1; }
+.variant-check span { color: #6c5042 !important; font-size: 12px !important; letter-spacing: 0 !important; text-transform: none !important; }
+.variant-actions { align-items: center; display: flex; flex-wrap: wrap; gap: 16px; grid-column: 1 / -1; }
+.variant-hint { color: #826b5a; font-size: 11.5px; }
+.variant-msg { color: #a8433a; font-size: 12px; grid-column: 1 / -1; margin: 0; }
+
+/* --- 群发 --- */
+.admin-alert { background: #f3d9c8; border-left: 3px solid #a8433a; color: #6b2f26; font-size: 12.5px; line-height: 1.8; padding: 14px 18px; }
+.admin-alert ul { margin: 6px 0 0; padding-left: 18px; }
+.campaign-form { display: grid; gap: 16px 20px; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); margin-top: 22px; }
+.campaign-form label { display: flex; flex-direction: column; gap: 6px; }
+.campaign-form label > span { color: #8a6853; font-size: 10px; letter-spacing: .12em; text-transform: uppercase; }
+.campaign-form textarea.field { font: inherit; line-height: 1.8; resize: vertical; }
+.campaign-send { border-top: 1px solid rgba(51,36,30,.16); display: grid; gap: 26px; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); margin-top: 8px; padding-top: 26px; }
+.campaign-step { display: flex; gap: 14px; }
+.campaign-step-no { align-items: center; background: #35251f; border-radius: 50%; color: #f4eadb; display: flex; flex: 0 0 26px; font-size: 12px; height: 26px; justify-content: center; }
+.campaign-step-title { font-size: 13px; font-weight: 600; }
+.campaign-row { align-items: center; display: flex; flex-wrap: wrap; gap: 12px; margin-top: 10px; }
+.campaign-ok { background: #ddebd8; color: #35502f; font-size: 12.5px; line-height: 1.8; margin-top: 18px; padding: 12px 16px; }
 
 /* ---------------------------------------------------------- 响应式 */
 

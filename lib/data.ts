@@ -96,3 +96,24 @@ export async function getOrdersForUser(profileId: string | null): Promise<Order[
     .order("created_at", { ascending: false });
   return (data ?? []).map((o) => ({ ...o, items: o.order_items ?? [] })) as Order[];
 }
+
+/**
+ * 后台专用：连已下架的商品和规格一起返回。
+ * 前台的 getProducts() 会过滤 active=true，后台用它就看不见下架项、
+ * 也就没法重新上架，所以单开一个。
+ */
+export async function getProductsForAdmin(): Promise<Product[]> {
+  const db = serviceClient();
+  if (!db) return PRODUCTS;
+
+  const { data: products } = await db
+    .from("products").select("*").order("sort_order");
+  const { data: variants } = await db
+    .from("variants").select("*").order("sort_order");
+  if (!products) return PRODUCTS;
+
+  return products.map((p) => ({
+    ...p,
+    variants: (variants ?? []).filter((v) => v.product_id === p.id) as Variant[],
+  })) as Product[];
+}

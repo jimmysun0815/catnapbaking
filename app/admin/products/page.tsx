@@ -1,6 +1,6 @@
-import { getCurrentBatch, getProducts, effectivePrice } from "@/lib/data";
-import { formatCents } from "@/lib/money";
+import { getCurrentBatch, getProductsForAdmin, effectivePrice } from "@/lib/data";
 import { requireAdmin } from "@/lib/admin-guard";
+import { VariantRow } from "@/components/VariantRow";
 
 export const dynamic = "force-dynamic";
 
@@ -16,7 +16,7 @@ const MODE: Record<string, string> = {
  */
 export default async function ProductsAdmin() {
   await requireAdmin();
-  const [products, batch] = await Promise.all([getProducts(), getCurrentBatch()]);
+  const [products, batch] = await Promise.all([getProductsForAdmin(), getCurrentBatch()]);
 
   return (
     <>
@@ -26,6 +26,7 @@ export default async function ProductsAdmin() {
           <h1>商品与价格</h1>
           <p className="admin-sub">
             改价立即对新订单生效。已下单的订单保留下单时的价格快照，历史报表不受影响。
+            每次改价都会记一条审计（操作人、时间、改动前后金额）。
           </p>
         </div>
       </div>
@@ -43,24 +44,13 @@ export default async function ProductsAdmin() {
                 <tr>
                   <th>规格</th><th>SKU</th><th className="num">每盒块数</th>
                   <th className="num">常规价</th><th className="num">本期实际价</th>
+                  <th className="num" />
                 </tr>
               </thead>
               <tbody>
-                {p.variants.map((v) => {
-                  const actual = effectivePrice(batch, v);
-                  const promo = actual !== v.price_cents;
-                  return (
-                    <tr key={v.id}>
-                      <td>{v.name_zh}</td>
-                      <td style={{ color: "#826b5a", fontSize: 12 }}>{v.sku}</td>
-                      <td className="num">{v.cookie_count}</td>
-                      <td className="num">{formatCents(v.price_cents)}</td>
-                      <td className="num" style={promo ? { color: "#b65f3e" } : undefined}>
-                        {formatCents(actual)}{promo && " ·活动价"}
-                      </td>
-                    </tr>
-                  );
-                })}
+                {p.variants.map((v) => (
+                  <VariantRow key={v.id} variant={v} actualCents={effectivePrice(batch, v)} />
+                ))}
               </tbody>
             </table>
           </div>
@@ -68,7 +58,8 @@ export default async function ProductsAdmin() {
       ))}
 
       <p className="admin-foot-note">
-        编辑表单待接入 Supabase 后开放：改价会写一条 price_changes 记录，含操作人、时间、改动前后金额。
+        「本期实际价」是批次活动价覆盖后的结果，改常规价不会覆盖本期活动价 —— 活动价在批次里设。
+        SKU 不可改：它是订单和报表的关联键，改了会对不上历史数据。
       </p>
     </>
   );

@@ -19,6 +19,8 @@ export type Variant = {
   cookie_count: number;
   price_cents: number;
   sort_order: number;
+  /** 演示数据里没有这个字段，视为上架 */
+  active?: boolean;
 };
 
 export type Product = {
