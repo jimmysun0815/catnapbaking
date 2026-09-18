@@ -5,6 +5,14 @@
  * 文案按 CFIA 规则写：比较型营养声明必须同屏说明参照物和每份差多少。
  */
 
+/** 自取点。地址与地图链接成对出现，改一个必须改另一个 */
+export const PICKUP = {
+  mapUrl: "https://maps.app.goo.gl/g6YtLTvJ6et3AXpx8",
+  address: "6551 Number 3 Rd, Richmond, BC V6Y 2B6",
+  label_zh: "Richmond Centre 周围自取",
+  label_en: "Pickup near Richmond Centre",
+};
+
 export const zh = {
   brand: "不太甜研究所",
   brandSub: "Cat Nap Baking",

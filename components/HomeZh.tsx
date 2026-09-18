@@ -1,7 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { ArrowUpRight, ChevronRight, Clock3, MapPin, Sparkles, Star } from "lucide-react";
-import { zh } from "@/lib/content";
+import { zh, PICKUP } from "@/lib/content";
 import { formatCents } from "@/lib/money";
 import { effectivePrice } from "@/lib/data";
 import { Header, Footer, type NavUser } from "@/components/SiteChrome";
@@ -202,7 +202,11 @@ export async function HomeZh({
             <div className="pickup-card">
               <MapPin size={18} />
               <span>自取</span>
-              <strong>{batch?.pickup_address ?? "Richmond 取货点"}</strong>
+              <strong>{PICKUP.label_zh}</strong>
+              <a className="pickup-addr" href={PICKUP.mapUrl}
+                 target="_blank" rel="noopener noreferrer">
+                {PICKUP.address}
+              </a>
               <small>{slotWindow}</small>
             </div>
             <div className="pickup-card">
