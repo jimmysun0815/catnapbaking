@@ -61,10 +61,12 @@ export async function PATCH(req: Request) {
   let audited = false;
   if (before.price_cents !== b.price_cents) {
     const user = await getSessionUser();
+    // 列名沿用 000_init_schema 里既有的定义，changed_by 指向 profiles.id
+    // （与 auth.users.id 同值）
     const { error: auditErr } = await db.from("price_changes").insert({
       variant_id: b.id,
-      old_cents: before.price_cents,
-      new_cents: b.price_cents,
+      old_price_cents: before.price_cents,
+      new_price_cents: b.price_cents,
       changed_by: user?.id ?? null,
     });
     // 审计写失败不回滚改价，但要让调用方知道，否则会以为留了痕迹
