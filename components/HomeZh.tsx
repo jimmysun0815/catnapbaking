@@ -33,7 +33,9 @@ export async function HomeZh({
   const remaining = batch ? Math.max(0, batch.capacity_boxes - batch.boxes_taken) : 0;
   const open = batch?.status === "open" && remaining > 0;
   const inBatch = flavours.filter((f) => batch?.flavour_ids.includes(f.id));
-  const shown = (inBatch.length ? inBatch : flavours).slice(0, 3);
+  // 版式按每期两个口味设计。这里不截断：批次真挂了三个时宁可换行，
+  // 也不要悄悄少显示一个，运营看不出来就成了事故
+  const shown = inBatch.length ? inBatch : flavours;
   const firstSlot = batch?.slots[0];
 
   const slotWindow = firstSlot
@@ -141,10 +143,18 @@ export async function HomeZh({
             {shown.map((f, i) => (
               <article className={`flavour-card flavour-${i}`} key={f.id}>
                 <div className="flavour-number">0{i + 1}</div>
-                <div className="cookie-orb" style={{ background: ["#d7b25e", "#eeceb4", "#9e6e46"][i] }}>
-                  <div className="cookie-inner" />
-                  <span className="orb-spark">✦</span>
-                </div>
+                {f.image_url ? (
+                  <div className="flavour-photo">
+                    <Image src={f.image_url} alt={f.name_zh} fill
+                      sizes="(max-width: 680px) 100vw, 44vw"
+                      style={{ objectFit: "cover" }} />
+                  </div>
+                ) : (
+                  <div className="cookie-orb" style={{ background: ["#d7b25e", "#eeceb4"][i] ?? "#d7b25e" }}>
+                    <div className="cookie-inner" />
+                    <span className="orb-spark">✦</span>
+                  </div>
+                )}
                 <div className="flavour-copy">
                   <h3>{f.name_zh}</h3>
                   <p>{f.name_en}</p>

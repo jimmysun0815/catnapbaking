@@ -16,22 +16,16 @@ export const FLAVOURS: Flavour[] = [
   {
     id: "f-classic",
     slug: "classic-chocolate-chip",
+    image_url: "/brand/04.jpg",
     name_zh: "经典巧克力曲奇",
     name_en: "Classic Chocolate Chip",
     desc_zh: "比利时黑巧克力，海盐收尾。外缘脆，中心软。",
     desc_en: "Belgian dark chocolate, finished with sea salt. Crisp edges, soft centre.",
   },
   {
-    id: "f-sesame",
-    slug: "black-sesame",
-    name_zh: "黑芝麻",
-    name_en: "Black Sesame",
-    desc_zh: "现磨黑芝麻酱，烘香浓，回口不腻。",
-    desc_en: "Stone-ground black sesame paste, deeply toasted.",
-  },
-  {
     id: "f-osmanthus",
     slug: "osmanthus-oolong",
+    image_url: "/brand/wulong.webp",
     name_zh: "桂花乌龙",
     name_en: "Osmanthus Oolong",
     desc_zh: "乌龙茶粉配干桂花，茶香清淡。",
@@ -92,7 +86,7 @@ export const BATCHES: Batch[] = [
       { id: "s-2", starts_at: at(2, 15), ends_at: at(2, 16), max_orders: 12, orders_taken: 7 },
       { id: "s-3", starts_at: at(2, 16), ends_at: at(2, 17), max_orders: 12, orders_taken: 3 },
     ],
-    flavour_ids: ["f-classic"],
+    flavour_ids: ["f-classic", "f-osmanthus"],
     prices: {},
   },
 ];

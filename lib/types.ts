@@ -9,6 +9,8 @@ export type Flavour = {
   name_en: string;
   desc_zh: string | null;
   desc_en: string | null;
+  /** 没配图时回退到 CSS 画的曲奇图形 */
+  image_url?: string | null;
 };
 
 export type Variant = {
