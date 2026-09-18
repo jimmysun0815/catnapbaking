@@ -45,7 +45,11 @@ export function Header({
   const links = isTeaser ? (zh ? ZH_NAV_TEASER : EN_NAV_TEASER) : (zh ? ZH_NAV : EN_NAV);
 
   return (
-    <header className={`nav ${zh ? "zh-nav" : "en-nav"}`} id="top">
+    <>
+      {/* 页脚「回到顶部」的锚点。不能挂在 header 上：header 是 sticky，
+          永远停在视口顶部，跳转到它等于原地不动。 */}
+      <span id="top" className="top-anchor" aria-hidden="true" />
+    <header className={`nav ${zh ? "zh-nav" : "en-nav"}`}>
       <BrandLockup locale={locale} tone={zh ? "cream" : "ink"} />
 
       <nav className={open ? "mobile-open" : ""}>
@@ -102,6 +106,7 @@ export function Header({
         </button>
       </div>
     </header>
+    </>
   );
 }
 
